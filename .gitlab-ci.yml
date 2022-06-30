@@ -15,4 +15,5 @@ import_data:
 create_s3:
   stage: deploy
   script: 
+   - apk add --no-cache bash python3 py3-pip
    - python s3.py
