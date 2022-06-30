@@ -6,7 +6,7 @@ import_data:
   stage: build
   script:
    - apk add --no-cache bash git curl 
-   - 'curl -h "Authorization header: $TOKEN" "https://gitlab.example.com/api/v4/projects/498/jobs/artifacts/main/download?job=generate_template"'
+   - 'curl --header "Authorization header: Bearer: $TOKEN" "http://gitlab.example.com/api/v4/projects/498/jobs/artifacts/main/download?job=generate_template" -o artifacts.zip'
    - unzip artifacts.zip
   artifacts:
    paths:
