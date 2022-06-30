@@ -23,3 +23,7 @@ create_s3:
    - source $ENV
    - set +a
    - python3 s3.py
+  needs:
+    - job: import_data
+      artifacts: true
+
