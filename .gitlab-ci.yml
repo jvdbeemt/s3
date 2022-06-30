@@ -20,8 +20,8 @@ import_data:
 create_s3:
   stage: deploy
   variables:
-    - VAULT_ADDR: http://vault:8200
-    - VAULT_TOKEN: root
+    VAULT_ADDR: http://vault:8200
+    VAULT_TOKEN: root
   script: 
    - apk add --no-cache bash python3 py3-pip
    - pip3 install hvac
