@@ -2,14 +2,14 @@ stages:
  - build
  - deploy
 
- import_data:
-   stage: build
-   script:
-    - 'curl -h "Authorization header: $TOKEN" "https://gitlab.example.com/api/v4/projects/498/jobs/artifacts/main/download?job=generate_template"'
-    - unzip artifacts.zip
-   artifacts:
-    paths:
-     - data.json
+import_data:
+  stage: build
+  script:
+   - 'curl -h "Authorization header: $TOKEN" "https://gitlab.example.com/api/v4/projects/498/jobs/artifacts/main/download?job=generate_template"'
+   - unzip artifacts.zip
+  artifacts:
+   paths:
+    - data.json
 
 create_s3:
   stage: deploy
