@@ -2,7 +2,7 @@ stages:
  - build
  - deploy
 
- services:
+services:
   - name: hashicorp/vault
     alias: vault
 
