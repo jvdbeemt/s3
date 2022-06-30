@@ -5,6 +5,7 @@ stages:
 import_data:
   stage: build
   script:
+   - apk add --no-cache bash git curl 
    - 'curl -h "Authorization header: $TOKEN" "https://gitlab.example.com/api/v4/projects/498/jobs/artifacts/main/download?job=generate_template"'
    - unzip artifacts.zip
   artifacts:
