@@ -68,7 +68,7 @@ def cf_s3(backup_region='backupemp'):
 def read_vault(secrets):
     data = read_json('data.json')
     vault_path = data['vault']
-    client = hvac.Client(url=os.environ['VAULT_ADDR'] token=os.environ['VAULT_TOKEN'])
+    client = hvac.Client(url=os.environ['VAULT_ADDR'], token=os.environ['VAULT_TOKEN'])
     client.sys.is_initialized()
     for secret in secrets[0].keys():
         if client.is_authenticated():
