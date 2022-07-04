@@ -1,5 +1,5 @@
 #!/bin/sh
-apk add --no-cache bash python3 py3-pip
+apk add --no-cache bash python3 py3-pip cloudfoundry-cli
 pip3 install hvac
 set -a 
 ENV=.env
