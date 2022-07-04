@@ -26,6 +26,7 @@ def shell_cmd(cmd):
               read = process.stderr.readline()
               if read:
                   print('stderr: %s' % read)
+                  exit(1)
           sys.stdout.flush()
 
       if process.poll() is not None:
