@@ -92,6 +92,7 @@ def cf_s3_create(data):
     shell_cmd(cmd=f"cf create-service-key {product}-{env} {product}-{env}-key")
 
 data = read_json('data.json')
+print(data)
 provider = get_provider(data)
 env = data['environment']
 services = get_provider_services(data)
