@@ -32,5 +32,4 @@ create_s3:
    - python3 s3.py
   needs:
     - job: import_data
-      artifacts: true
 
