@@ -23,13 +23,7 @@ create_s3:
     VAULT_ADDR: http://vault:8200
     VAULT_TOKEN: root
   script: 
-   - apk add --no-cache bash python3 py3-pip
-   - pip3 install hvac
-   - set -a 
-   - ENV=.env
-   - source $ENV
-   - set +a
-   - python3 s3.py
+    - ./scripts/s3.sh
   needs:
     - job: import_data
 
