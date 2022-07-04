@@ -41,16 +41,26 @@ def json_to_file(payload,dest):
     with open(dest, 'w') as f:
         f.write(data)
 
-def get_cf_service():
-    data = read_json('data.json')
-    for service in  data['cloud_foundry']['services']:
-      if 's3' in service:
-          generate_cf_s3 = cf_s3()
-          cf_s3_login()
-          cf_s3_create()
+def get_provider(data):
+    cloud_provider = data['provider']['name']
+    return (cloud_provider)
 
-def cf_s3(backup_region='backupemp'):
-   get_buckets = os.environ['S3_BUCKETS']
+def get_provider_services(data):
+    svcs= []
+    services = data['provider']['services']
+    for service in range(len(services)):
+      svcs.append(services[service]["name"])
+    return(svcs)
+
+def get_provider_secrets(data):
+    secrets= []
+    data_secrets = data['provider']['secrets']
+    for secret in range(len(data_secrets)):
+      secrets.append(data_secrets[secret]["name"])
+    return(secrets)
+
+def s3_data(backup_region='backupemp'):
+   get_buckets = os.environ['s3_buckets']
    dest = f"s3.json"
 
    payload = {
@@ -65,39 +75,34 @@ def cf_s3(backup_region='backupemp'):
       payload['buckets'].append({"name": _b})
    json_to_file(payload,dest)
 
-def read_vault(secrets):
-    data = read_json('data.json')
-    vault_path = data['vault']
-    client = hvac.Client(url=os.environ['VAULT_ADDR'], token=os.environ['VAULT_TOKEN'])
+def read_vault(vault,secret):
+    client = hvac.Client(url=os.environ['VAULT_ADDR'],token=os.environ['VAULT_TOKEN'])
     client.sys.is_initialized()
-    for secret in secrets[0].keys():
-        if client.is_authenticated():
-            read_response = client.secrets.kv.v1.read_secret(vault_path)
-            secret_data=read_response['data'][secret]
+    if client.is_authenticated():
+      read_response = client.secrets.kv.v1.read_secret(vault_path)
+      secret_data=read_response['data'][secret]
     return(secret_data)
 
-def cf_s3_login():
-    data = read_json('data.json')
-    product = data['product']
-    env = data['environment']
-    api = os.environ[f"cf_api_{env}"]
-    user = os.environ[f"cf_user_{env}"]
-    secrets = data['cloud_foundry']['secrets']
-    secret_key = 'password'
-    get_secret = read_vault(secrets)
-
-    shell_cmd(cmd=f"cf login --skip-ssl-validation -a {api} -u {user} -p {get_secret}")
+def cf_s3_login(api,org,user,password):
+    shell_cmd(cmd=f"cf login --skip-ssl-validation -a {api} -u {user} -p {password}")
     shell_cmd(cmd=f"cf target {user} -s services")
 
-
-def cf_s3_create():
-    data = read_json('data.json')
-    product = data['product']
-    env = data['environment']
+def cf_s3_create(data):
     shell_cmd(cmd=f"cf create-service s3-bucket standard {product}-{env} -c s3.json")
     shell_cmd(cmd=f"cf create-service-key {product}-{env} {product}-{env}-key")
 
-cf_s3_login()
-cf_s3_create()
+data = read_json('data.json')
+provider = get_provider(data)
+env = data['environment']
+services = get_provider_services(data)
+vault = data['vault']
 
-
+if 'cloud_foundry' in provider:
+  for service in services:
+    if 's3' in service:
+      _data = s3_data()
+      api = os.environ[f"{provider}_api_{env}"]
+      org = os.environ[f"{provider}_org_{env}"]
+      user = os.environ[f"{provider}_user_{env}"]
+      password = os.environ[f"{provider}_password_{env}"]
+      cf_s3_login(api,org,user,password)
