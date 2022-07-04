@@ -29,7 +29,6 @@ create_s3:
    - ENV=.env
    - source $ENV
    - set +a
-   - ls
    - python3 s3.py
   needs:
     - job: import_data
